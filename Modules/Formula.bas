@@ -5,7 +5,7 @@ Public Str0 As String
 Public Str1 As String
 Public Str2 As String
 Dim L As Long
-Dim OpLast As Boolean
+Public FuncLast As String
 Function NumR(n As Integer) As String
     NumR = Application.WorksheetFunction.Roman(n)
 End Function
@@ -129,7 +129,7 @@ Function Form_Conv(FuncName As String, ArgN As Long, Arg() As String) As String
         If ArgN = 0 Or Arg(1) = "" Then Arg(1) = "Op."
         Conv1 = ", " & Arg(1) & " " & Arg(0)
         Conv2 = Arg(1) & " " & Arg(0)
-        If OpLast = True Then Conv2 = "£¬" & Conv2 ' G10.21
+        If FuncLast = "op" Then Conv2 = "£¬" & Conv2 ' G10.21
         If ArgN = 2 Then
             If Arg(1) = "Op." Then
                 Conv1 = Conv1 & " No. " & Arg(2)
@@ -169,7 +169,7 @@ Function Form_Conv(FuncName As String, ArgN As Long, Arg() As String) As String
         Case "ti"
             Conv1 = " '" & Conv1 & "'"
             Conv2 = "¡°" & Conv2 & "¡±"
-            If OpLast = False Then Conv1 = "," & Conv1
+            If FuncLast <> "op" Then Conv1 = "," & Conv1
         Case "al"
             Conv1 = " (" & Conv1 & ")"
             Conv2 = "£¨" & Conv2 & "£©"
@@ -430,11 +430,7 @@ Function Form_Conv(FuncName As String, ArgN As Long, Arg() As String) As String
         End If
     End Select
     Form_Conv = Str_Comb(Conv1, Conv2)
-    If FuncName = "op" Then
-        OpLast = True
-    Else
-        OpLast = False
-    End If
+    FuncLast = FuncName
 End Function
 Function Form_Read(Start As Long, Optional SubFunc As Boolean = False, Optional Conv As String) As Long
     Dim FuncName As String
@@ -497,7 +493,7 @@ Public Sub Form_ReadAll(Optional FormStr)
     Str1 = ""
     Str2 = ""
     L = Len(Str0)
-    OpLast = False
+    FuncLast = ""
     
     If Left(Str0, 1) = "~" Then
         Mono = "~"
